@@ -1,0 +1,11 @@
+@import "image-item.scss";
+@import "folder-files.scss";
+@import "folder-folders.scss";
+@import "folder-files-options.scss";
+@import "folder-item.scss";
+@import "images-stats.scss";
+
+.nbb-folder {
+    width: calc(100% - 20px);
+    margin: auto;
+}

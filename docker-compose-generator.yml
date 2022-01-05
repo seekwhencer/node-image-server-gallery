@@ -1,0 +1,38 @@
+version: "3.6"
+
+##
+#   This is the compose file only to build the image.
+#
+#   To run the generator after you build this image, just type:
+#
+#   docker-compose -f docker-compose-generator-replicas.yml up -d
+#
+##
+
+networks:
+    app:
+        external: false
+        name: ${PROJECT_NAME}_default
+
+services:
+    generator:
+        restart: always
+        build:
+            context: ./apps
+            dockerfile: generator/Dockerfile
+        image: ${PROJECT_NAME}_generator
+        command: "npm run build"
+        container_name: ${PROJECT_NAME}_generator
+        volumes:
+            - .:/home/node/app
+            - /home/node/app/apps/generator/node_modules
+            - /home/node/app/apps/shared/node_modules
+            - ${STORE_ROOT_PATH}:/media/photos
+            - ${STORE_THUMBNAIL_PATH}:/media/thumbs
+        networks:
+            - app
+        environment:
+            - STORE_ROOT_PATH=/media/photos
+            - STORE_THUMBNAIL_PATH=/media/thumbs
+            - GENERATOR_CLIENT_HOST=${GENERATOR_CLIENT_HOST}
+            - GENERATOR_CLIENT_PORT=${GENERATOR_CLIENT_PORT}

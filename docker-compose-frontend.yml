@@ -1,0 +1,29 @@
+version: "3.6"
+
+networks:
+    proxy:
+        external: true
+        name: proxy_default
+    app:
+        external: false
+        name: ${PROJECT_NAME}_default
+
+services:
+    frontend:
+        restart: always
+        build: ./apps/frontend/.
+        working_dir: /home/node/app/apps/frontend
+        image: ${PROJECT_NAME}_frontend
+        command: "npm run dev"
+        container_name: ${PROJECT_NAME}_frontend
+        volumes:
+            - .:/home/node/app
+            - /home/node/app/apps/frontend/node_modules
+        networks:
+            - proxy
+            - app
+        environment:
+            - VIRTUAL_HOST=${FRONTEND_VIRTUAL_HOST}
+            - VIRTUAL_PORT=${FRONTEND_VIRTUAL_PORT}
+            - PROXY_TARGET_HOST=${FRONTEND_PROXY_TARGET_HOST}
+            - PROXY_TARGET_PORT=${SERVER_PORT}

@@ -1,0 +1,8 @@
+.idea
+.hot
+node_modules
+npm-debug.log
+apps/generator/dist/**/*
+apps/generator/*-linux64
+config/default.conf
+.env

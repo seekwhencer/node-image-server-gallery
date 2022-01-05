@@ -1,0 +1,33 @@
+version: "3.6"
+
+networks:
+    proxy:
+        external: true
+        name: proxy_default
+    app:
+        external: false
+        name: ${PROJECT_NAME}_default
+
+services:
+    server:
+        restart: always
+        build: ./apps/server/.
+        working_dir: /home/node/app/apps/server
+        image: ${PROJECT_NAME}_server
+        command: "npm start"
+        container_name: ${PROJECT_NAME}_server
+        volumes:
+            - .:/home/node/app
+            - /home/node/app/apps/server/node_modules
+            - /home/node/app/apps/shared/node_modules
+            - ${STORE_ROOT_PATH}:/media/photos
+            - ${STORE_THUMBNAIL_PATH}:/media/thumbs
+        networks:
+            - proxy
+            - app
+        environment:
+            - VIRTUAL_HOST=${SERVER_VIRTUAL_HOST}
+            - VIRTUAL_PORT=${SERVER_PORT}
+            - SERVER_PORT=${SERVER_PORT}
+            - STORE_ROOT_PATH=/media/photos
+            - STORE_THUMBNAIL_PATH=/media/thumbs

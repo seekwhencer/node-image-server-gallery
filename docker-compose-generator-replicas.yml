@@ -1,0 +1,30 @@
+version: "3.6"
+
+networks:
+    app:
+        external: false
+        name: ${PROJECT_NAME}_default
+
+services:
+    generator-replicas:
+        image: ${PROJECT_NAME}_generator
+        restart: always
+        working_dir: /home/node/app/apps/generator
+        command: "npm start"
+        #container_name: ${PROJECT_NAME}_generator
+        volumes:
+            - .:/home/node/app
+            - /home/node/app/apps/generator/node_modules
+            - /home/node/app/apps/shared/node_modules
+            - ${STORE_ROOT_PATH}:/media/photos
+            - ${STORE_THUMBNAIL_PATH}:/media/thumbs
+            - ./apps/generator/policy.xml:/etc/ImageMagick-6/policy.xml
+        networks:
+            - app
+        deploy:
+            replicas: ${GENERATOR_REPLICAS}
+        environment:
+            - STORE_ROOT_PATH=/media/photos
+            - STORE_THUMBNAIL_PATH=/media/thumbs
+            - GENERATOR_CLIENT_HOST=${GENERATOR_CLIENT_HOST}
+            - GENERATOR_CLIENT_PORT=${GENERATOR_CLIENT_PORT}

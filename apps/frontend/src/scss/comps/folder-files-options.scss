@@ -1,0 +1,67 @@
+.nbb-folder {
+    .nbb-folder-files-options {
+        background: $color-gray-b;
+        margin-bottom: 2px;
+        margin-top: 15px;
+
+        &__selection {
+            display: grid;
+            grid-template-columns: 100px calc(100% - 200px) 100px;
+            padding: 5px;
+
+            button {
+                display: inline;
+                background-color: $color-gray-a;
+                color: white;
+                cursor: pointer;
+                margin: 0;
+
+                &:hover {
+                    background-color: white;
+                    color: black;
+                }
+            }
+        }
+
+        &__picking-mode {
+            grid-column: 1 / 3;
+            grid-row: 1;
+            overflow: hidden;
+
+            button {
+                display: none;
+            }
+        }
+
+        &__selection-group {
+            grid-column: 2 / 3;
+            grid-row: 1;
+
+            button {
+                display: none;
+            }
+        }
+
+        &__latest {
+            grid-column: 3 / 3;
+            grid-row: 1;
+            text-align: right;
+
+            .loading {
+                @keyframes latest-loading {
+                    50% {
+                        background-color: $color-cloud;
+                    }
+                }
+
+                &:hover {
+                    background-color: inherit;
+                    color: white;
+                }
+
+                animation: latest-loading 1s infinite;
+                animation-timing-function: linear;
+            }
+        }
+    }
+}

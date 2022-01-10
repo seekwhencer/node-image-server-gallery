@@ -31,3 +31,4 @@ services:
             - SERVER_PORT=${SERVER_PORT}
             - STORE_ROOT_PATH=/media/photos
             - STORE_THUMBNAIL_PATH=/media/thumbs
+            - HOST_IP=${HOST_IP}

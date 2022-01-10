@@ -16,7 +16,7 @@ networks:
 
 services:
     generator:
-        restart: always
+        #restart: always
         build:
             context: ./apps
             dockerfile: generator/Dockerfile

@@ -30,29 +30,23 @@ export default class ImageItem extends MODULECLASS {
         this.parent.target.append(this.target);
         this.imageElement = this.target.querySelector('img');
 
-        this.imageElement.addEventListener('loadstart', e => {
+        this.on('loadstart', e => {
             this.target.classList.add('loading');
             this.isLoading = true;
-            //console.log('>>> CONCURRENT IMAGE REQUESTS', this.parent.concurrentImageRequests);
-        }, {once: true});
+        });
 
-        this.imageElement.addEventListener('loadend', () => {
+        this.on('loadend', () => {
             this.target.classList.add('loaded');
             this.target.classList.remove('loading');
             this.isLoading = false;
             this.parent.concurrentImageRequests--;
             this.parent.canLoadNext() ? this.nextImage() : false;
-        }, {once: true});
+        });
 
-        this.imageElement.addEventListener('load', () => {}, {once: true});
-
-        this.imageElement.onerror = e => {
-            console.log('>>>>>>>>>>>>>> ERROR', e);
-            this.isLoading = false;
-            this.nextImage();
-            this.target.classList.remove('loading');
-            this.target.classList.add('failed');
-        }
+        this.on('loaderror', e => {
+            console.log('>>> IMAGE LOAD ERROR', e);
+            this.emit('loadend');
+        });
     }
 
     select(e) {
@@ -70,16 +64,23 @@ export default class ImageItem extends MODULECLASS {
     }
 
     load() {
-        //this.findOwnIndex();
         this.drawCountStats();
         this.thumbnailIndex = this.thumbnails.length - 1 || 0;
         this.parent.concurrentImageRequests++;
-        this.imageElement.src = this.thumbnails[this.thumbnailIndex].url;
-        this.parent.canLoadNext() ? this.nextImage() : false;
+
+        const req = new Request(this.thumbnails[this.thumbnailIndex].url);
+
+        this.emit('loadstart');
+        fetch(req)
+            .then(response => response.blob())
+            .then(imageBlob => {
+                this.imageElement.src = URL.createObjectURL(imageBlob);
+                this.emit('loadend');
+            })
+            .catch(e => this.emit('loaderror', e));
     }
 
     nextImage() {
-        //console.log('>>> NEXT IMAGE >>>', this.parent.images.length, this.imageIndex);
         if (!this.parent.images)
             return false;
 
@@ -101,7 +102,7 @@ export default class ImageItem extends MODULECLASS {
 
         const nextImage = this.parent.images[nextIndex];
 
-        if(nextImage.isLoading)
+        if (nextImage.isLoading)
             return this.findNextImage(nextIndex + 1);
 
         return nextImage;

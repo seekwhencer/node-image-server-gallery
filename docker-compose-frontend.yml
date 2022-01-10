@@ -27,3 +27,4 @@ services:
             - VIRTUAL_PORT=${FRONTEND_VIRTUAL_PORT}
             - PROXY_TARGET_HOST=${FRONTEND_PROXY_TARGET_HOST}
             - PROXY_TARGET_PORT=${SERVER_PORT}
+            - HOST_IP=${HOST_IP}
